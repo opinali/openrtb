@@ -182,6 +182,8 @@ message BidRequest {
     // Minimum bid for this impression expressed in CPM.
     // [AdX: min(BidRequest.AdSlot.matching_ad_data.minimum_cpm_micros) *
     //       1,000,000]
+    // We can also use buyer specific floor using [AdX: (BidRequest.AdSlot.matching_ad_data.BuyerPricingRule.minimum_cpm_micros) *
+    //       1,000,000]
     optional double bidfloor = 8 [default = 0];
 
     // Currency specified using ISO-4217 alpha codes. This may be different
