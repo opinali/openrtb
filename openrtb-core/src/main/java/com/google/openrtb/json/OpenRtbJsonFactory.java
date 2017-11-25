@@ -24,7 +24,7 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
-import com.google.protobuf.GeneratedMessage.ExtendableBuilder;
+import com.google.protobuf.GeneratedMessageV3.ExtendableBuilder;
 import com.google.protobuf.Message;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -79,8 +79,7 @@ public class OpenRtbJsonFactory {
     this.forceNativeAsObject = config.forceNativeAsObject;
     this.extReaders = ImmutableSetMultimap.copyOf(config.extReaders);
     this.extWriters = ImmutableMap.copyOf(Maps.transformValues(config.extWriters,
-        (Map<String, Map<String, OpenRtbJsonExtWriter<?>>> map) ->
-            ImmutableMap.copyOf(Maps.transformValues(map, map2 -> ImmutableMap.copyOf(map2)))));
+        map -> ImmutableMap.copyOf(Maps.transformValues(map, map2 -> ImmutableMap.copyOf(map2)))));
   }
 
   /**

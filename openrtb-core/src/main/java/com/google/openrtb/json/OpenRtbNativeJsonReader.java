@@ -22,12 +22,16 @@ import static com.google.openrtb.json.OpenRtbJsonUtils.getCurrentName;
 import static com.google.openrtb.json.OpenRtbJsonUtils.startArray;
 import static com.google.openrtb.json.OpenRtbJsonUtils.startObject;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.google.common.io.CharSource;
 import com.google.common.io.Closeables;
 import com.google.openrtb.OpenRtb.AdUnitId;
 import com.google.openrtb.OpenRtb.ContextSubtype;
 import com.google.openrtb.OpenRtb.ContextType;
 import com.google.openrtb.OpenRtb.DataAssetType;
+import com.google.openrtb.OpenRtb.EventTrackingMethod;
+import com.google.openrtb.OpenRtb.EventType;
 import com.google.openrtb.OpenRtb.ImageAssetType;
 import com.google.openrtb.OpenRtb.LayoutId;
 import com.google.openrtb.OpenRtb.NativeRequest;
@@ -35,10 +39,6 @@ import com.google.openrtb.OpenRtb.NativeResponse;
 import com.google.openrtb.OpenRtb.PlacementType;
 import com.google.openrtb.util.ProtoUtils;
 import com.google.protobuf.ByteString;
-
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -127,14 +127,14 @@ public class OpenRtbNativeJsonReader extends AbstractOpenRtbJsonReader {
         req.setVer(par.getText());
         break;
       case "layout": {
-          LayoutId value = LayoutId.valueOf(par.getIntValue());
+          LayoutId value = LayoutId.forNumber(par.getIntValue());
           if (checkEnum(value)) {
             req.setLayout(value);
           }
         }
         break;
       case "adunit": {
-          AdUnitId value = AdUnitId.valueOf(par.getIntValue());
+          AdUnitId value = AdUnitId.forNumber(par.getIntValue());
           if (checkEnum(value)) {
             req.setAdunit(value);
           }
@@ -152,24 +152,38 @@ public class OpenRtbNativeJsonReader extends AbstractOpenRtbJsonReader {
         }
         break;
       case "context": {
-          ContextType value = ContextType.valueOf(par.getIntValue());
+          ContextType value = ContextType.forNumber(par.getIntValue());
           if (checkEnum(value)) {
             req.setContext(value);
           }
         }
         break;
       case "contextsubtype": {
-          ContextSubtype value = ContextSubtype.valueOf(par.getIntValue());
+          ContextSubtype value = ContextSubtype.forNumber(par.getIntValue());
           if (checkEnum(value)) {
             req.setContextsubtype(value);
           }
         }
         break;
       case "plcmttype": {
-          PlacementType value = PlacementType.valueOf(par.getIntValue());
+          PlacementType value = PlacementType.forNumber(par.getIntValue());
           if (checkEnum(value)) {
             req.setPlcmttype(value);
           }
+        }
+        break;
+      case "aurlsupport":
+        req.setAurlsupport(par.getValueAsBoolean());
+        break;
+      case "durlsupport":
+        req.setDurlsupport(par.getValueAsBoolean());
+        break;
+      case "privacy":
+        req.setPrivacy(par.getValueAsBoolean());
+        break;
+      case "eventtrackers":
+        for (startArray(par); endArray(par); par.nextToken()) {
+          req.addEventtrackers(readReqEventTrackers(par));
         }
         break;
       default:
@@ -255,7 +269,7 @@ public class OpenRtbNativeJsonReader extends AbstractOpenRtbJsonReader {
       throws IOException {
     switch (fieldName) {
       case "type": {
-          ImageAssetType value = ImageAssetType.valueOf(par.getIntValue());
+          ImageAssetType value = ImageAssetType.forNumber(par.getIntValue());
           if (checkEnum(value)) {
             image.setType(value);
           }
@@ -298,7 +312,7 @@ public class OpenRtbNativeJsonReader extends AbstractOpenRtbJsonReader {
       JsonParser par, NativeRequest.Asset.Data.Builder data, String fieldName) throws IOException {
     switch (fieldName) {
       case "type": {
-          DataAssetType value = DataAssetType.valueOf(par.getIntValue());
+          DataAssetType value = DataAssetType.forNumber(par.getIntValue());
           if (checkEnum(value)) {
             data.setType(value);
           }
@@ -309,6 +323,42 @@ public class OpenRtbNativeJsonReader extends AbstractOpenRtbJsonReader {
         break;
       default:
         readOther(data, par, fieldName);
+    }
+  }
+
+  public final NativeRequest.EventTrackers.Builder readReqEventTrackers(JsonParser par)
+      throws IOException {
+    NativeRequest.EventTrackers.Builder trackers = NativeRequest.EventTrackers.newBuilder();
+    for (startObject(par); endObject(par); par.nextToken()) {
+      String fieldName = getCurrentName(par);
+      if (par.nextToken() != JsonToken.VALUE_NULL) {
+        readReqEventTrackersField(par, trackers, fieldName);
+      }
+    }
+    return trackers;
+  }
+
+  protected void readReqEventTrackersField(
+      JsonParser par, NativeRequest.EventTrackers.Builder trackers, String fieldName)
+          throws IOException {
+    switch (fieldName) {
+      case "event": {
+          EventType value = EventType.forNumber(par.getIntValue());
+          if (checkEnum(value)) {
+            trackers.setEvent(value);
+          }
+        }
+        break;
+      case "methods":
+        for (startArray(par); endArray(par); par.nextToken()) {
+          EventTrackingMethod value = EventTrackingMethod.forNumber(par.getIntValue());
+          if (checkEnum(value)) {
+            trackers.addMethods(value);
+          }
+        }
+        break;
+      default:
+        readOther(trackers, par, fieldName);
     }
   }
 
@@ -399,6 +449,20 @@ public class OpenRtbNativeJsonReader extends AbstractOpenRtbJsonReader {
       case "jstracker":
         resp.setJstracker(par.getText());
         break;
+      case "assetsurl":
+        resp.setAssetsurl(par.getText());
+        break;
+      case "dcourl":
+        resp.setDcourl(par.getText());
+        break;
+      case "eventtrackers":
+        for (startArray(par); endArray(par); par.nextToken()) {
+          resp.addEventtrackers(readRespEventTracker(par));
+        }
+        break;
+      case "privacy":
+        resp.setPrivacy(par.getText());
+        break;
       default:
         readOther(resp, par, fieldName);
     }
@@ -463,6 +527,9 @@ public class OpenRtbNativeJsonReader extends AbstractOpenRtbJsonReader {
       case "text":
         title.setText(par.getText());
         break;
+      case "len":
+        title.setLen(par.getIntValue());
+        break;
       default:
         readOther(title, par, fieldName);
     }
@@ -486,6 +553,13 @@ public class OpenRtbNativeJsonReader extends AbstractOpenRtbJsonReader {
     switch (fieldName) {
       case "url":
         image.setUrl(par.getText());
+        break;
+      case "type": {
+          ImageAssetType value = ImageAssetType.forNumber(par.getIntValue());
+          if (checkEnum(value)) {
+            image.setType(value);
+          }
+        }
         break;
       case "w":
         image.setW(par.getIntValue());
@@ -542,6 +616,16 @@ public class OpenRtbNativeJsonReader extends AbstractOpenRtbJsonReader {
       case "value":
         data.setValue(par.getText());
         break;
+      case "type": {
+          DataAssetType value = DataAssetType.forNumber(par.getIntValue());
+          if (checkEnum(value)) {
+            data.setType(value);
+          }
+        }
+        break;
+      case "len":
+        data.setLen(par.getIntValue());
+        break;
       default:
         readOther(data, par, fieldName);
     }
@@ -574,6 +658,44 @@ public class OpenRtbNativeJsonReader extends AbstractOpenRtbJsonReader {
         break;
       default:
         readOther(link, par, fieldName);
+    }
+  }
+
+  public final NativeResponse.EventTracker.Builder readRespEventTracker(JsonParser par)
+      throws IOException {
+    NativeResponse.EventTracker.Builder tracker = NativeResponse.EventTracker.newBuilder();
+    for (startObject(par); endObject(par); par.nextToken()) {
+      String fieldName = getCurrentName(par);
+      if (par.nextToken() != JsonToken.VALUE_NULL) {
+        readRespEventTrackerField(par, tracker, fieldName);
+      }
+    }
+    return tracker;
+  }
+
+  protected void readRespEventTrackerField(
+      JsonParser par, NativeResponse.EventTracker.Builder tracker, String fieldName)
+          throws IOException {
+    switch (fieldName) {
+      case "event": {
+          EventType value = EventType.forNumber(par.getIntValue());
+          if (checkEnum(value)) {
+            tracker.setEvent(value);
+          }
+        }
+        break;
+      case "method": {
+          EventTrackingMethod value = EventTrackingMethod.forNumber(par.getIntValue());
+          if (checkEnum(value)) {
+            tracker.setMethod(value);
+          }
+        }
+        break;
+      case "url":
+        tracker.setUrl(par.getText());
+        break;
+      default:
+        readOther(tracker, par, fieldName);
     }
   }
 

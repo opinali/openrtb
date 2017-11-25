@@ -1,7 +1,47 @@
 RELEASE NOTES
 ----------------------------------------------------------------------
 
-## Version 1.1.1, ??-??-2016
+## Version 1.5.1, 22-11-2017
+- Now using Protobuf 3.5.0.
+
+## Version 1.5.0, 01-11-2017
+* Support for OpenRTB Native 1.2!
+* Removed all DoubleClick Ad Exchange-specific mapping documentation
+  that was present in [AdX:...] comments in the proto.  People using
+  the library for AdX should refer to the [OpenRTB Integration Guide](
+  https://developers.google.com/ad-exchange/rtb/openrtb-guide).
+* The library now builds correctly, and is supported, on JDK 9.
+
+## Version 1.4.7, 22-09-2017
+- Dependency and proto documentation updates.
+
+## Version 1.4.6, 29-08-2017
+- Now using Protobuf 3.4.0.
+
+## Version 1.4.5, 07-08-2017
+- Only dependency updates.
+
+## Version 1.4.3, 27-06-2017
+- Fixed very minor bug in JSON support.
+
+## Version 1.4.1, 23-05-2017
+- Now using Protobuf 3.3.1.
+
+## Version 1.4.0, 18-04-2017
+* Support for OpenRTB 2.5!
+
+## Version 1.3.0, 03-02-2017
+* Updated Protocol Buffers to v3.2.0!  You will need to install this
+  exact version of protobuf, have it in the PATH, rebuild everything.
+
+## Version 1.2.2, 09-01-2017
+* OpenRTB proto update (docs only).
+
+## Version 1.2.1, 09-11-2016
+* Added some utility methods for JSON extensions.
+
+## Version 1.2.0, 28-10-2016
+* Removed `ObjectMapper` interface.
 
 ## Version 1.1.0, 14-09-2016
 * Support for OpenRTB 2.4 & OpenRTB Native 1.1.

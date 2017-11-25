@@ -18,7 +18,8 @@ package com.google.openrtb.json;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.google.common.collect.ImmutableSet;
-import com.google.protobuf.GeneratedMessage.ExtendableBuilder;
+import com.google.openrtb.util.OpenRtbUtils;
+import com.google.protobuf.GeneratedMessageV3.ExtendableBuilder;
 import java.io.IOException;
 
 /**
@@ -78,4 +79,12 @@ public abstract class OpenRtbJsonExtReader<EB extends ExtendableBuilder<?, EB>> 
    * @throws IOException any parsing error
    */
   protected abstract void read(EB msg, JsonParser par) throws IOException;
+
+  protected final boolean checkEnum(Enum<?> e) {
+    return e != null;
+  }
+
+  protected final boolean checkContentCategory(String cat) {
+    return OpenRtbUtils.categoryFromName(cat) != null;
+  }
 }

@@ -25,8 +25,8 @@ import static com.google.openrtb.json.OpenRtbJsonUtils.startObject;
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import com.google.protobuf.GeneratedMessage.ExtendableBuilder;
 import com.google.protobuf.GeneratedMessage.GeneratedExtension;
+import com.google.protobuf.GeneratedMessageV3.ExtendableBuilder;
 import com.google.protobuf.Message;
 import java.io.IOException;
 import java.util.List;
@@ -89,7 +89,7 @@ public abstract class OpenRtbJsonExtComplexReader<
     boolean extRead = false;
     JsonToken tokLast = par.getCurrentToken();
     JsonLocation locLast = par.getCurrentLocation();
-    while (endObject(par)) {
+    while (endObject(par) && (isJsonObject || filter(par))) {
       read(ext, par);
       if (par.getCurrentToken() != tokLast || !par.getCurrentLocation().equals(locLast)) {
         extRead = true;
